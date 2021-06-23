@@ -1,0 +1,145 @@
+.Toggles {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.Toggles-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, #f6b868 0%, #ee6b2d 100%);
+  box-shadow: 0 0 10px #f6b868;
+  border-radius: 20px;
+  overflow: visible;
+  padding: 20px;
+}
+
+.Toggles-title {
+  text-align: center;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 40px;
+  color: #fff;
+  max-width: 900px;
+  margin: 50px 0;
+  width: 100%;
+}
+
+.Toggles-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-size: 30px;
+  max-width: 900px;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.Toggles-result {
+  text-align: center;
+  font: normal;
+  font-weight: bold;
+  color: #fff;
+  font-size: 32px;
+  max-width: 900px;
+  margin: 50px 0;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .Toggles-container {
+    padding: 20px;
+  }
+
+  .Toggles-title {
+    font-size: 35px;
+    margin: 40px 0;
+  }
+
+  .Toggles-answers {
+    font-size: 25px;
+    margin: 20px 0;
+    gap: 20px;
+  }
+
+  .Toggles-result {
+    font-size: 35px;
+    margin: 40px 0;
+  }
+}
+
+@media (max-width: 992px) {
+  .Toggles-container {
+    padding: 17px;
+  }
+
+  .Toggles-title {
+    font-size: 25px;
+    margin: 30px 0;
+  }
+
+  .Toggles-answers {
+    font-size: 20px;
+    margin: 17px 0;
+    gap: 15px;
+  }
+
+  .Toggles-result {
+    font-size: 25px;
+    margin: 30px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .Toggles-container {
+    padding: 17px;
+  }
+
+  .Toggles-title {
+    font-size: 22px;
+    margin: 25px 0;
+  }
+
+  .Toggles-answers {
+    font-size: 20px;
+    margin: 17px 0;
+    gap: 24px;
+  }
+
+  .Toggles-result {
+    font-size: 22px;
+    margin: 25px 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .Toggles {
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .Toggles-container {
+    padding: 17px;
+    min-width: 320px;
+    border-radius: 0;
+  }
+
+  .Toggles-title {
+    font-size: 20px;
+    margin: 20px 0;
+  }
+
+  .Toggles-answers {
+    font-size: 18px;
+    margin: 15px 0;
+    gap: 32px;
+  }
+
+  .Toggles-result {
+    font-size: 20px;
+    margin: 30px 0;
+  }
+}
