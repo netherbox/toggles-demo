@@ -2,43 +2,36 @@ import { Component } from "react";
 
 import "./Toggle.css";
 
-export interface ToggleAnswer {
+export interface Answer {
   id: string;
   text: string;
 }
 
 export interface ToggleProps {
   id: string;
-  answers: Array<ToggleAnswer>;
-  selectedId: string;
-  correctId: string;
+  answers: Array<Answer>;
+  selectedAnswerId: string;
+  correctAnswerId: string;
+  onChange: (answerId: string) => void;
 }
 
-export interface ToggleState {
-  selectedIndex: number;
-}
-
-export class Toggle extends Component<ToggleProps, ToggleState> {
+export class Toggle extends Component<ToggleProps> {
   constructor(props: ToggleProps) {
     super(props);
-    this.state = {
-      selectedIndex: this.props.answers.findIndex(
-        (answer) => answer.id === this.props.selectedId
-      ),
-    };
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  selectAnswer(event: { target: { value: string } }) {
-    this.setState({
-      selectedIndex: this.props.answers.findIndex(
-        (answer) => answer.id === event.target.value
-      ),
-    });
+  handleChange(event: { target: { value: string } }) {
+    this.props.onChange(event.target.value);
   }
 
   getSliderStyles() {
+    const index = this.props.answers.findIndex(
+      (answer) => answer.id === this.props.selectedAnswerId
+    );
+
     return {
-      left: `${(100 / this.props.answers.length) * this.state.selectedIndex}%`,
+      left: `${(100 / this.props.answers.length) * index}%`,
       width: `${100 / this.props.answers.length}%`,
     };
   }
@@ -50,31 +43,33 @@ export class Toggle extends Component<ToggleProps, ToggleState> {
   }
 
   render() {
-    const listItems = this.props.answers.map(
-      (answer: ToggleAnswer, index: number) => {
-        const checked = this.state.selectedIndex === index;
-        const id = `${this.props.id}-${answer.id}`;
-        return (
-          <div
-            className={"Toggle-answer" + (checked ? " selected" : "")}
-            style={this.getAnswerStyles()}
-            key={answer.id}
-          >
-            <input
-              type="radio"
-              id={id}
-              name={this.props.id}
-              value={answer.id}
-              onChange={(e) => this.selectAnswer(e)}
-              checked={checked}
-            ></input>
-            <label htmlFor={id} tabIndex={-1}>
-              {answer.text}
-            </label>
-          </div>
-        );
-      }
-    );
+    if (!this.props.answers.length) {
+      return null;
+    }
+
+    const listItems = this.props.answers.map((answer: Answer) => {
+      const checked = this.props.selectedAnswerId === answer.id;
+      const id = `${this.props.id}-${answer.id}`;
+      return (
+        <div
+          className={"Toggle-answer" + (checked ? " selected" : "")}
+          style={this.getAnswerStyles()}
+          key={answer.id}
+        >
+          <input
+            type="radio"
+            id={id}
+            name={this.props.id}
+            value={answer.id}
+            onChange={this.handleChange}
+            checked={checked}
+          ></input>
+          <label htmlFor={id} tabIndex={-1}>
+            {answer.text}
+          </label>
+        </div>
+      );
+    });
 
     return (
       <div className="Toggle">

@@ -1,22 +1,74 @@
-import { Component } from 'react';
-import Toggle, { ToggleProps } from '../Toggle/Toggle';
+import { Component } from "react";
+import Toggle, { Answer } from "../Toggle/Toggle";
+import shuffle from "lodash/shuffle";
+import random from "lodash/random";
 
-import './Toggles.css';
+import "./Toggles.css";
+
+export interface Question {
+  id: string;
+  answers: Array<Answer>;
+  selectedAnswerId: string;
+  correctAnswerId: string;
+}
+
+export interface TogglesPropsQuestion {
+  id: string;
+  answers: Array<Answer>;
+  correctAnswerId: string;
+}
 
 export interface TogglesProps {
   id: string;
   title: string;
-  questions: Array<ToggleProps>;
+  questions: Array<TogglesPropsQuestion>;
 }
 
-export class Toggles extends Component<TogglesProps> {
+export interface TogglesState {
+  questions: Array<Question>;
+}
+
+export class Toggles extends Component<TogglesProps, TogglesState> {
+  constructor(props: TogglesProps) {
+    super(props);
+
+    // Shuffle the questions, answers and set random current selected answer
+    this.state = {
+      questions: shuffle(
+        this.props.questions.map((question: TogglesPropsQuestion) => ({
+          ...question,
+          answers: shuffle(question.answers),
+          selectedAnswerId:
+            question.answers[random(0, question.answers.length - 1)].id,
+        }))
+      ),
+    };
+  }
+
+  handleChange(questionId: string, selectedAnswerId: string) {
+    console.log(questionId, selectedAnswerId);
+    this.setState((prevState: TogglesState) => ({
+      questions: prevState.questions.map((question: Question) => ({
+        ...question,
+        selectedAnswerId:
+          question.id === questionId
+            ? selectedAnswerId
+            : question.selectedAnswerId,
+      })),
+    }));
+  }
+
   render() {
-    const toggleItems = this.props.questions.map((toggle: ToggleProps) => (
+    const toggleItems = this.state.questions.map((question: Question) => (
       <Toggle
-        id={`${this.props.id}-${toggle.id}`}
-        answers={toggle.answers}
-        selectedId={toggle.selectedId}
-        correctId={toggle.correctId}
+        id={`${this.props.id}-${question.id}`}
+        key={question.id}
+        answers={question.answers}
+        selectedAnswerId={question.selectedAnswerId}
+        correctAnswerId={question.correctAnswerId}
+        onChange={(selectedAnswerId) =>
+          this.handleChange(question.id, selectedAnswerId)
+        }
       ></Toggle>
     ));
 
