@@ -26,6 +26,7 @@ export interface TogglesProps {
 
 export interface TogglesState {
   questions: Array<Question>;
+  isCorrect: boolean;
 }
 
 export class Toggles extends Component<TogglesProps, TogglesState> {
@@ -33,29 +34,44 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
     super(props);
 
     // Shuffle the questions, answers and set random current selected answer
+    const questions = shuffle(
+      this.props.questions.map((question: TogglesPropsQuestion) => ({
+        ...question,
+        answers: shuffle(question.answers),
+        selectedAnswerId:
+          question.answers[random(0, question.answers.length - 1)].id,
+      }))
+    );
+
     this.state = {
-      questions: shuffle(
-        this.props.questions.map((question: TogglesPropsQuestion) => ({
-          ...question,
-          answers: shuffle(question.answers),
-          selectedAnswerId:
-            question.answers[random(0, question.answers.length - 1)].id,
-        }))
-      ),
+      questions,
+      isCorrect: this.isCorrect(questions),
     };
   }
 
+  isCorrect(questions: Array<Question>): boolean {
+    return questions.reduce(
+      (accumulator: boolean, question: Question) =>
+        accumulator && question.correctAnswerId === question.selectedAnswerId,
+      true
+    );
+  }
+
   handleChange(questionId: string, selectedAnswerId: string) {
-    console.log(questionId, selectedAnswerId);
-    this.setState((prevState: TogglesState) => ({
-      questions: prevState.questions.map((question: Question) => ({
+    this.setState((prevState: TogglesState) => {
+      const questions = prevState.questions.map((question: Question) => ({
         ...question,
         selectedAnswerId:
           question.id === questionId
             ? selectedAnswerId
             : question.selectedAnswerId,
-      })),
-    }));
+      }));
+
+      return {
+        questions,
+        isCorrect: this.isCorrect(questions),
+      };
+    });
   }
 
   render() {
@@ -77,7 +93,11 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
         <div className="Toggles-container">
           <div className="Toggles-title">{this.props.title}</div>
           <div className="Toggles-answers">{toggleItems}</div>
-          <div className="Toggles-result">The answer is incorrect</div>
+          <div className="Toggles-result">
+            {this.state.isCorrect
+              ? "The answer is correct!"
+              : "The answer is incorrect"}
+          </div>
         </div>
       </div>
     );
