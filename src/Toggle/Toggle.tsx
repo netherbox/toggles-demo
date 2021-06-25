@@ -13,6 +13,10 @@ export interface ToggleProps {
   selectedAnswerId: string;
   correctAnswerId: string;
   locked: boolean;
+  borderColor: string;
+  answerColor: string;
+  selectedAnswerColor: string;
+  sliderColor: string;
   onChange: (answerId: string) => void;
 }
 
@@ -26,6 +30,12 @@ export class Toggle extends Component<ToggleProps> {
     this.props.onChange(event.target.value);
   }
 
+  getContainerStyle(): React.CSSProperties {
+    return {
+      borderColor: this.props.borderColor,
+    };
+  }
+
   getSliderStyles() {
     const index = this.props.answers.findIndex(
       (answer) => answer.id === this.props.selectedAnswerId
@@ -34,6 +44,8 @@ export class Toggle extends Component<ToggleProps> {
     return {
       left: `${(100 / this.props.answers.length) * index}%`,
       width: `${100 / this.props.answers.length}%`,
+      backgroundColor: this.props.sliderColor,
+      borderColor: this.props.sliderColor,
     };
   }
 
@@ -43,17 +55,23 @@ export class Toggle extends Component<ToggleProps> {
     };
   }
 
+  getAnswerLabelStyles(selected: boolean) {
+    return {
+      color: selected ? this.props.selectedAnswerColor : this.props.answerColor,
+    };
+  }
+
   render() {
     if (!this.props.answers.length) {
       return null;
     }
 
     const listItems = this.props.answers.map((answer: Answer) => {
-      const checked = this.props.selectedAnswerId === answer.id;
+      const selected = this.props.selectedAnswerId === answer.id;
       const id = `${this.props.id}-${answer.id}`;
       return (
         <div
-          className={"Toggle-answer" + (checked ? " selected" : "")}
+          className={"Toggle-answer" + (selected ? " selected" : "")}
           style={this.getAnswerStyles()}
           key={answer.id}
         >
@@ -63,10 +81,14 @@ export class Toggle extends Component<ToggleProps> {
             name={this.props.id}
             value={answer.id}
             onChange={this.handleChange}
-            checked={checked}
+            checked={selected}
             disabled={this.props.locked}
           ></input>
-          <label htmlFor={id} tabIndex={-1}>
+          <label
+            htmlFor={id}
+            tabIndex={-1}
+            style={this.getAnswerLabelStyles(selected)}
+          >
             {answer.text}
           </label>
         </div>
@@ -74,8 +96,15 @@ export class Toggle extends Component<ToggleProps> {
     });
 
     return (
-      <div className={"Toggle" + (this.props.locked ? ' locked' : '')}>
-        <div className="Toggle-slider" style={this.getSliderStyles()} data-testid="slider"></div>
+      <div
+        className={"Toggle" + (this.props.locked ? " locked" : "")}
+        style={this.getContainerStyle()}
+      >
+        <div
+          className="Toggle-slider"
+          style={this.getSliderStyles()}
+          data-testid="slider"
+        ></div>
         {listItems}
       </div>
     );

@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import Toggle from "./Toggle";
 
 test("should not change if locked", async () => {
-  const handleChange = jest.fn()
+  const handleChange = jest.fn();
 
   render(
     <Toggle
@@ -15,6 +15,10 @@ test("should not change if locked", async () => {
       selectedAnswerId="a2"
       correctAnswerId="a1"
       locked={true}
+      borderColor=""
+      answerColor=""
+      selectedAnswerColor=""
+      sliderColor=""
       onChange={handleChange}
     />
   );
@@ -25,7 +29,7 @@ test("should not change if locked", async () => {
 });
 
 test("should change answer if unlocked", async () => {
-  const handleChange = jest.fn()
+  const handleChange = jest.fn();
 
   render(
     <Toggle
@@ -37,6 +41,10 @@ test("should change answer if unlocked", async () => {
       selectedAnswerId="a2"
       correctAnswerId="a1"
       locked={false}
+      borderColor=""
+      answerColor=""
+      selectedAnswerColor=""
+      sliderColor=""
       onChange={handleChange}
     />
   );

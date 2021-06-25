@@ -28,15 +28,37 @@ export interface TogglesProps {
 export interface TogglesState {
   questions: Array<Question>;
   isCorrect: boolean;
+  gradientTopColor: string;
+  gradientBottomColor: string;
+  borderColor: string;
+  answerColor: string;
+  selectedAnswerColor: string;
+  sliderColor: string;
 }
 
 export class Toggles extends Component<TogglesProps, TogglesState> {
+  // Color steps order from incorreect -> correct
+  theme = {
+    gradientTopColor: ["#F1B496", "#F6B868", "#76E0C2"],
+    gradientBottomColor: ["#EA806A", "#EE6B2D", "#59CADA"],
+    textColor: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
+    borderColor: ["#FBFBFB", "#F9D29F", "#FBFBFB"],
+    answerColor: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
+    selectedAnswerColor: ["#E47958", "#9F938B", "#4CAD94"],
+    sliderColor: ["#F2CBBD", "#F8CAA3", "#A5E7E2"],
+  };
+
+  getClosestColor(colors: Array<string>, position: number) {
+    return colors[Math.floor((colors.length - 1) * position)];
+  }
+
   constructor(props: TogglesProps) {
     super(props);
 
     let questions: Array<Question>;
 
     if (this.props.disableShuffle) {
+      // If shuffle is disabled set the selected answer to the first one
       questions = this.props.questions.map(
         (question: TogglesPropsQuestion) => ({
           ...question,
@@ -59,6 +81,7 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
     this.state = {
       questions,
       isCorrect: this.isCorrect(questions),
+      ...this.getCorrectnessTheme(questions),
     };
   }
 
@@ -68,6 +91,39 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
         accumulator && question.correctAnswerId === question.selectedAnswerId,
       true
     );
+  }
+
+  getCorrectness(questions: Array<Question>): number {
+    return (
+      questions.reduce(
+        (accumulator: number, question: Question) =>
+          accumulator +
+          (question.correctAnswerId === question.selectedAnswerId ? 1 : 0),
+        0
+      ) / questions.length
+    );
+  }
+
+  private getCorrectnessTheme(questions: Array<Question>) {
+    const correctness = this.getCorrectness(questions);
+
+    return {
+      gradientTopColor: this.getClosestColor(
+        this.theme.gradientTopColor,
+        correctness
+      ),
+      gradientBottomColor: this.getClosestColor(
+        this.theme.gradientBottomColor,
+        correctness
+      ),
+      borderColor: this.getClosestColor(this.theme.borderColor, correctness),
+      answerColor: this.getClosestColor(this.theme.answerColor, correctness),
+      selectedAnswerColor: this.getClosestColor(
+        this.theme.selectedAnswerColor,
+        correctness
+      ),
+      sliderColor: this.getClosestColor(this.theme.sliderColor, correctness),
+    };
   }
 
   handleChange(questionId: string, selectedAnswerId: string) {
@@ -83,8 +139,16 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
       return {
         questions,
         isCorrect: this.isCorrect(questions),
+        ...this.getCorrectnessTheme(questions),
       };
     });
+  }
+
+  getContainerStyle() {
+    return {
+      background: `linear-gradient(180deg, ${this.state.gradientTopColor} 0%, ${this.state.gradientBottomColor} 100%)`,
+      boxShadow: `0 0 10px ${this.state.gradientTopColor}`,
+    };
   }
 
   render() {
@@ -96,6 +160,10 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
         selectedAnswerId={question.selectedAnswerId}
         correctAnswerId={question.correctAnswerId}
         locked={this.state.isCorrect}
+        borderColor={this.state.borderColor}
+        answerColor={this.state.answerColor}
+        selectedAnswerColor={this.state.selectedAnswerColor}
+        sliderColor={this.state.sliderColor}
         onChange={(selectedAnswerId) =>
           this.handleChange(question.id, selectedAnswerId)
         }
@@ -104,7 +172,11 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
 
     return (
       <div className="Toggles">
-        <div className="Toggles-container">
+        <div
+          className="Toggles-container"
+          data-testid="toggles-container"
+          style={this.getContainerStyle()}
+        >
           <div className="Toggles-title">{this.props.title}</div>
           <div className="Toggles-answers">{toggleItems}</div>
           <div className="Toggles-result">

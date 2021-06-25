@@ -1,6 +1,12 @@
-# Getting Started with Create React App
+# Toggles demo project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Assumptions/limitations
+
+- Initial selected answer is random so there is a chance all answers are correct from the start
+- Answers are shuffled inside the toggles component
+- Automatic vertical layout is not supported
+- Correct/incorrect messages are hardcoded
+- No focus state indication
 
 ## Available Scripts
 
