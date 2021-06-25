@@ -22,6 +22,7 @@ export interface TogglesProps {
   id: string;
   title: string;
   questions: Array<TogglesPropsQuestion>;
+  disableShuffle?: boolean;
 }
 
 export interface TogglesState {
@@ -33,15 +34,27 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
   constructor(props: TogglesProps) {
     super(props);
 
-    // Shuffle the questions, answers and set random current selected answer
-    const questions = shuffle(
-      this.props.questions.map((question: TogglesPropsQuestion) => ({
-        ...question,
-        answers: shuffle(question.answers),
-        selectedAnswerId:
-          question.answers[random(0, question.answers.length - 1)].id,
-      }))
-    );
+    let questions: Array<Question>;
+
+    if (!!this.props.disableShuffle) {
+      // Shuffle the questions, answers and set random current selected answer
+      questions = shuffle(
+        this.props.questions.map((question: TogglesPropsQuestion) => ({
+          ...question,
+          answers: shuffle(question.answers),
+          selectedAnswerId:
+            question.answers[random(0, question.answers.length - 1)].id,
+        }))
+      );
+    } else {
+      questions = this.props.questions.map(
+        (question: TogglesPropsQuestion) => ({
+          ...question,
+          answers: question.answers,
+          selectedAnswerId: question.answers[0].id,
+        })
+      );
+    }
 
     this.state = {
       questions,

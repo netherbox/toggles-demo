@@ -17,6 +17,7 @@ test("should display is correct message if correct answer selected",async () => 
           correctAnswerId: "a1",
         },
       ]}
+      disableShuffle={true}
     />
   );
 
@@ -42,6 +43,7 @@ test("should display is incorrect message if incorrect answer selected",async ()
           correctAnswerId: "a1",
         },
       ]}
+      disableShuffle={true}
     />
   );
 
