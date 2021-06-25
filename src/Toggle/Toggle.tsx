@@ -12,6 +12,7 @@ export interface ToggleProps {
   answers: Array<Answer>;
   selectedAnswerId: string;
   correctAnswerId: string;
+  locked: boolean;
   onChange: (answerId: string) => void;
 }
 
@@ -63,6 +64,7 @@ export class Toggle extends Component<ToggleProps> {
             value={answer.id}
             onChange={this.handleChange}
             checked={checked}
+            disabled={this.props.locked}
           ></input>
           <label htmlFor={id} tabIndex={-1}>
             {answer.text}
@@ -72,8 +74,8 @@ export class Toggle extends Component<ToggleProps> {
     });
 
     return (
-      <div className="Toggle">
-        <div className="Toggle-slider" style={this.getSliderStyles()}></div>
+      <div className={"Toggle" + (this.props.locked ? ' locked' : '')}>
+        <div className="Toggle-slider" style={this.getSliderStyles()} data-testid="slider"></div>
         {listItems}
       </div>
     );

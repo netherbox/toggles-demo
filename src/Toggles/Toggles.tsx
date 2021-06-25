@@ -36,7 +36,15 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
 
     let questions: Array<Question>;
 
-    if (!!this.props.disableShuffle) {
+    if (this.props.disableShuffle) {
+      questions = this.props.questions.map(
+        (question: TogglesPropsQuestion) => ({
+          ...question,
+          answers: question.answers,
+          selectedAnswerId: question.answers[0].id,
+        })
+      );
+    } else {
       // Shuffle the questions, answers and set random current selected answer
       questions = shuffle(
         this.props.questions.map((question: TogglesPropsQuestion) => ({
@@ -45,14 +53,6 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
           selectedAnswerId:
             question.answers[random(0, question.answers.length - 1)].id,
         }))
-      );
-    } else {
-      questions = this.props.questions.map(
-        (question: TogglesPropsQuestion) => ({
-          ...question,
-          answers: question.answers,
-          selectedAnswerId: question.answers[0].id,
-        })
       );
     }
 
@@ -95,6 +95,7 @@ export class Toggles extends Component<TogglesProps, TogglesState> {
         answers={question.answers}
         selectedAnswerId={question.selectedAnswerId}
         correctAnswerId={question.correctAnswerId}
+        locked={this.state.isCorrect}
         onChange={(selectedAnswerId) =>
           this.handleChange(question.id, selectedAnswerId)
         }
