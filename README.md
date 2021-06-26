@@ -11,6 +11,7 @@
 - Automatic vertical layout is not supported
 - Correct/incorrect messages are hardcoded
 - No focus state indication
+- Parameters should be valid: no empty list of questions, correct answer id should exist, ids should be unique by the type
 
 ## Available Scripts
 
